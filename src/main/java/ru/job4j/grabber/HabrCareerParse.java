@@ -17,7 +17,8 @@ public class HabrCareerParse implements Parse {
 
     private static final String SOURCE_LINK = "https://career.habr.com";
 
-    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer?page=", SOURCE_LINK);
+    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
+    private static final String PAGE_PARAMETER = "?page=";
 
     private final DateTimeParser dateTimeParser;
 
@@ -28,11 +29,8 @@ public class HabrCareerParse implements Parse {
     public static void main(String[] args) {
         HabrCareerDateTimeParser parser = new HabrCareerDateTimeParser();
         HabrCareerParse habrCareerParse = new HabrCareerParse(parser);
-        List<Post> resultList = new ArrayList<>();
-        for (int pageNumber = 1; pageNumber <= 5; pageNumber++) {
-            List<Post> list = habrCareerParse.list(PAGE_LINK + pageNumber);
-            resultList.addAll(list);
-        }
+        List<Post> resultList = habrCareerParse.list(PAGE_LINK);
+        resultList.forEach(post -> System.out.printf("%tF: %s %s. Описание: %s%n", post.getCreated(), post.getTitle(), post.getLink(), post.getDescription()));
     }
 
     private static String retrieveDescription(String link) {
@@ -50,12 +48,14 @@ public class HabrCareerParse implements Parse {
     @Override
     public List<Post> list(String link) {
         List<Post> result = new ArrayList<>();
-        Connection connection = Jsoup.connect(link);
         try {
-            Document document = connection.get();
-            Elements rows = document.select(".vacancy-card__inner");
-            for (Element row : rows) {
-                result.add(parsePageAndGetPost(row));
+            for (int pageNumber = 1; pageNumber <= 5; pageNumber++) {
+                Connection connection = Jsoup.connect(link + PAGE_PARAMETER + pageNumber);
+                Document document = connection.get();
+                Elements rows = document.select(".vacancy-card__inner");
+                for (Element row : rows) {
+                    result.add(parsePageAndGetPost(row));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
