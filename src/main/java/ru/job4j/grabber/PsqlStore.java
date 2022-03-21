@@ -13,6 +13,7 @@ public class PsqlStore implements Store, AutoCloseable {
 
     public PsqlStore(Properties cfg) throws Exception {
         this.properties = cfg;
+        this.cnn = getConnection();
     }
 
     private Connection getConnection() throws Exception {
@@ -95,23 +96,20 @@ public class PsqlStore implements Store, AutoCloseable {
 
     public static void main(String[] args) throws Exception {
         PsqlStore psqlStore = new PsqlStore(loadProperties());
-        try (Connection connection = psqlStore.getConnection()) {
-            psqlStore.cnn = connection;
-            Post post = new Post(
-                    "Java - программист",
-                    "www.test-career.ru/12345",
-                    "Ищем java-программиста",
-                    LocalDateTime.now());
-            Post secondPost = new Post(
-                    "Python - программист",
-                    "www.test-career.ru/54321",
-                    "Ищем python-программиста",
-                    LocalDateTime.now());
-            psqlStore.save(post);
-            psqlStore.save(secondPost);
-            System.out.println(psqlStore.findById(1));
-            List<Post> list = psqlStore.getAll();
-            System.out.println(list);
-        }
+        Post post = new Post(
+                "Java - программист",
+                "www.test-career.ru/12345",
+                "Ищем java-программиста",
+                LocalDateTime.now());
+        Post secondPost = new Post(
+                "Python - программист",
+                "www.test-career.ru/54321",
+                "Ищем python-программиста",
+                LocalDateTime.now());
+        psqlStore.save(post);
+        psqlStore.save(secondPost);
+        System.out.println(psqlStore.findById(1));
+        List<Post> list = psqlStore.getAll();
+        System.out.println(list);
     }
 }
