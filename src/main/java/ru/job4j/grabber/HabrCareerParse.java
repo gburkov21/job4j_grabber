@@ -35,30 +35,44 @@ public class HabrCareerParse implements Parse {
         }
     }
 
-    private static String retrieveDescription(String link) throws IOException {
+    private static String retrieveDescription(String link) {
+        String resultDescription = "";
         Connection connection = Jsoup.connect(link);
-        Document document = connection.get();
-        return document.select(".job_show_description__body").first().text();
+        try {
+            Document document = connection.get();
+            resultDescription = document.select(".job_show_description__body").first().text();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return resultDescription;
     }
 
     @Override
-    public List<Post> list(String link) throws IOException {
+    public List<Post> list(String link) {
         List<Post> result = new ArrayList<>();
         Connection connection = Jsoup.connect(link);
-        Document document = connection.get();
-        Elements rows = document.select(".vacancy-card__inner");
-        for (Element row : rows) {
-            Element titleElement = row.select(".vacancy-card__title").first();
-            Element linkElement = titleElement.child(0);
-            Element dateElement = row.select(".vacancy-card__date").first();
-            Element dateLinkElement = dateElement.child(0);
-            String vacancyName = titleElement.text();
-            String dateAttribute = dateLinkElement.attr("datetime");
-            LocalDateTime dateTime = dateTimeParser.parse(dateAttribute);
-            String vacancyLink = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
-            String description = retrieveDescription(vacancyLink);
-            result.add(new Post(vacancyName, vacancyLink, description, dateTime));
+        try {
+            Document document = connection.get();
+            Elements rows = document.select(".vacancy-card__inner");
+            for (Element row : rows) {
+                result.add(parsePageAndGetPost(row));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return result;
+    }
+
+    private Post parsePageAndGetPost(Element row) {
+        Element titleElement = row.select(".vacancy-card__title").first();
+        Element linkElement = titleElement.child(0);
+        Element dateElement = row.select(".vacancy-card__date").first();
+        Element dateLinkElement = dateElement.child(0);
+        String vacancyName = titleElement.text();
+        String dateAttribute = dateLinkElement.attr("datetime");
+        LocalDateTime dateTime = dateTimeParser.parse(dateAttribute);
+        String vacancyLink = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
+        String description = retrieveDescription(vacancyLink);
+        return new Post(vacancyName, vacancyLink, description, dateTime);
     }
 }
