@@ -25,7 +25,7 @@ public class HabrCareerParse implements Parse {
         this.dateTimeParser = dateTimeParser;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         HabrCareerDateTimeParser parser = new HabrCareerDateTimeParser();
         HabrCareerParse habrCareerParse = new HabrCareerParse(parser);
         List<Post> resultList = new ArrayList<>();
