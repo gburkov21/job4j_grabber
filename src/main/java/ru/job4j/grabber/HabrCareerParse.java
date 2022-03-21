@@ -17,18 +17,13 @@ public class HabrCareerParse implements Parse {
 
     private static final String SOURCE_LINK = "https://career.habr.com";
 
-    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
+    public static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
     private static final String PAGE_PARAMETER = "?page=";
 
     private final DateTimeParser dateTimeParser;
 
     public HabrCareerParse(DateTimeParser dateTimeParser) {
         this.dateTimeParser = dateTimeParser;
-    }
-
-    @Override
-    public String getPageLink() {
-        return PAGE_LINK;
     }
 
     public static void main(String[] args) {
@@ -78,6 +73,6 @@ public class HabrCareerParse implements Parse {
         LocalDateTime dateTime = dateTimeParser.parse(dateAttribute);
         String vacancyLink = String.format("%s%s", SOURCE_LINK, linkElement.attr("href"));
         String description = retrieveDescription(vacancyLink);
-        return new Post(vacancyName, vacancyLink, description, dateTime);
+        return new Post(vacancyName, description, vacancyLink, dateTime);
     }
 }

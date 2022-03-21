@@ -61,7 +61,7 @@ public class Grabber implements Grab {
             JobDataMap map = context.getJobDetail().getJobDataMap();
             Store store = (Store) map.get("store");
             Parse parse = (Parse) map.get("parse");
-            List<Post> vacancyList = parse.list(parse.getPageLink());
+            List<Post> vacancyList = parse.list(HabrCareerParse.PAGE_LINK);
             vacancyList.forEach(store::save);
             List<Post> downloadedList = store.getAll();
             downloadedList.forEach(post ->

@@ -98,13 +98,13 @@ public class PsqlStore implements Store, AutoCloseable {
         PsqlStore psqlStore = new PsqlStore(loadProperties());
         Post post = new Post(
                 "Java - программист",
-                "www.test-career.ru/12345",
                 "Ищем java-программиста",
+                "www.test-career.ru/12345",
                 LocalDateTime.now());
         Post secondPost = new Post(
                 "Python - программист",
-                "www.test-career.ru/54321",
                 "Ищем python-программиста",
+                "www.test-career.ru/54321",
                 LocalDateTime.now());
         psqlStore.save(post);
         psqlStore.save(secondPost);
