@@ -16,15 +16,13 @@ import static org.quartz.SimpleScheduleBuilder.*;
 
 public class AlertRabbit {
     public static void main(String[] args) {
-        try {
+        Properties properties = loadProperties();
+        try (Connection connection = getConnection(properties)) {
             List<Long> store = new ArrayList<>();
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
             JobDataMap data = new JobDataMap();
             data.put("store", store);
-
-            Properties properties = loadProperties();
-            Connection connection = getConnection(properties);
             data.put("connection", connection);
 
             JobDetail job = newJob(Rabbit.class)
