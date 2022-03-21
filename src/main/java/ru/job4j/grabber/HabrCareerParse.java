@@ -26,6 +26,11 @@ public class HabrCareerParse implements Parse {
         this.dateTimeParser = dateTimeParser;
     }
 
+    @Override
+    public String getPageLink() {
+        return PAGE_LINK;
+    }
+
     public static void main(String[] args) {
         HabrCareerDateTimeParser parser = new HabrCareerDateTimeParser();
         HabrCareerParse habrCareerParse = new HabrCareerParse(parser);
