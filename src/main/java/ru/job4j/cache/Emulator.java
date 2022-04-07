@@ -1,20 +1,30 @@
 package ru.job4j.cache;
 
+import java.nio.file.Path;
+import java.util.Scanner;
+
 public class Emulator {
     public static void main(String[] args) {
-        DirFileCache dirFileCache = new DirFileCache("src/main/resources/cache_files/");
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Введите путь до файла: ");
+        String directory = scanner.nextLine();
+        System.out.print("Введите имя файла и расширение: ");
+        String fileName = scanner.nextLine();
+        checkParameters(directory, fileName);
+        DirFileCache dirFileCache = new DirFileCache(directory);
 
-        String pathToNamesFile = dirFileCache.getCachingDir() + "Names.txt";
-        String pathToAddressesFile = dirFileCache.getCachingDir() + "Address.txt";
+        String resultFromFile = dirFileCache.get(fileName);
+        System.out.println(resultFromFile);
+        String resultFromCache = dirFileCache.get(fileName);
+        System.out.println(resultFromCache);
+    }
 
-        String namesFromFile = dirFileCache.get(pathToNamesFile);
-        System.out.println(namesFromFile);
-        String namesFromCache = dirFileCache.get(pathToNamesFile);
-        System.out.println(namesFromCache);
-
-        String addressesFromFile = dirFileCache.get(pathToAddressesFile);
-        System.out.println(addressesFromFile);
-        String addressesFromCache = dirFileCache.get(pathToAddressesFile);
-        System.out.println(addressesFromCache);
+    private static void checkParameters(String directory, String fileName) {
+        if (!Path.of(directory).toFile().isDirectory()) {
+            throw new IllegalArgumentException("Некорректный путь к директории: " + directory);
+        }
+        if (!Path.of(directory, fileName).toFile().isFile()) {
+            throw new IllegalArgumentException("Отсутствует файл: " + fileName + " в директории: " + directory);
+        }
     }
 }
